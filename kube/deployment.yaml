@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memfag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memfag
+  template:
+    metadata:
+      labels:
+        app: memfag
+    spec:
+      containers:
+      - name: memfag
+        command:
+        - /app/memfag
+        env:
+        - name: MEMFAG_START
+          value: "16"
+        - name: MEMFAG_LIMIT
+          value: "64"
+        - name: MEMFAG_HOLD_FOR
+          value: "300"
+        image: synfinmelab/memfag:v0.1
+        imagePullPolicy: IfNotPresent
+        #resources:
+        #  limits:
+        #    memory: 1Gi
