@@ -22,16 +22,24 @@ static void * mem_buf = NULL;
 int
 main(int argc, char* argv[])
 {
+	char * start_envvar = NULL;
+	char * limit_envvar = NULL;
+	char * hold_for_envvar = NULL;
 	int start_alloc, limit_alloc, hold_for;
 
-	if (argc != 4) {
+	start_envvar = getenv("MEMFAG_START");
+	limit_envvar = getenv("MEMFAG_LIMIT");
+	hold_for_envvar = getenv("MEMFAG_HOLD_FOR");
+
+	if (start_envvar == NULL || limit_envvar == NULL
+			|| hold_for_envvar == NULL) {
 		print_usage();
 		return 0;
 	}
 
-	start_alloc = strtol(argv[1], NULL, 10);
-	limit_alloc = strtol(argv[2], NULL, 10);
-	hold_for = strtol(argv[3], NULL, 10);
+	start_alloc = strtol(start_envvar, NULL, 10);
+	limit_alloc = strtol(limit_envvar, NULL, 10);
+	hold_for = strtol(hold_for_envvar, NULL, 10);
 
 	// Check for sanity:
 	if (start_alloc < 1) {
@@ -67,11 +75,12 @@ main(int argc, char* argv[])
 static void
 print_usage()
 {
-	fprintf(stderr, "Usage:\n  This program expects 3 arguments:\n"
-"    <start> -- allocate <start> MB of RAM on start, double allocation\n"
-"               every <hold_for> seconds;\n"
-"    <limit> -- reset to <start> when memory allocation is over <limit> MB;\n"
-"    <hold_for> -- how long to keep allocated memory, seconds.\n");
+	fprintf(stderr, "Usage:\n"
+"  This program expects 3 environment variables to be set:\n"
+"    MEMFAG_START -- allocate <start> MB of RAM on start, double allocation\n"
+"                    every <hold_for> seconds;\n"
+"    MEMFAG_LIMIT -- reset to <start> when memory allocation is over <limit> MB;\n"
+"    MEMFAG_HOLD_FOR -- how long to keep allocated memory, seconds.\n");
 }
 
 
